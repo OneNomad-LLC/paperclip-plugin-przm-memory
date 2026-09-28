@@ -1,0 +1,55 @@
+{
+  "name": "@onenomad/paperclip-plugin-przm-memory",
+  "version": "0.1.0",
+  "description": "Give Paperclip agents long-term memory with przm Memory: search and save memories as agent tools, see related memories on issues, and save outcomes of finished issues automatically.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "OneNomad LLC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OneNomad-LLC/paperclip-plugin-przm-memory.git"
+  },
+  "homepage": "https://github.com/OneNomad-LLC/paperclip-plugin-przm-memory#readme",
+  "keywords": [
+    "paperclip",
+    "paperclip-plugin",
+    "przm",
+    "memory",
+    "mcp"
+  ],
+  "paperclipPlugin": {
+    "manifest": "./dist/manifest.js",
+    "worker": "./dist/worker.js",
+    "ui": "./dist/ui/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run typecheck"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "2026.916.1",
+    "@modelcontextprotocol/sdk": "^1.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "esbuild": "^0.25.0",
+    "react": "^19.0.0",
+    "typescript": "^5.9.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}
