@@ -120,7 +120,7 @@ const manifest: PaperclipPluginManifestV1 = {
   ],
   ui: {
     slots: [
-      { type: "detailTab", id: "przm-memory-issue-tab", displayName: "Memory", exportName: "IssueMemoryTab", entityTypes: ["issue"] },
+      { type: "taskDetailView", id: "przm-memory-issue-tab", displayName: "Memory", exportName: "IssueMemoryTab", entityTypes: ["issue"] },
       { type: "detailTab", id: "przm-memory-project-tab", displayName: "Memory", exportName: "ProjectMemoryTab", entityTypes: ["project"] },
     ],
   },
