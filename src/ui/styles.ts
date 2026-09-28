@@ -17,6 +17,11 @@ export const CSS = `
 .pmem .btn:disabled { opacity: .5; cursor: default; }
 .pmem .btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
 .pmem textarea { width: 100%; min-height: 64px; resize: vertical; font: inherit; color: inherit; background: var(--background); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+.pmem .memories { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow: auto; }
+.pmem .memories li { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.pmem .memories p { margin: 0 0 6px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pmem .memories .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--muted-foreground); font-size: 12px; }
+.pmem .memories .tag { border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; }
 .pmem .results { white-space: pre-wrap; font-size: 12.5px; background: var(--accent); border-radius: 8px; padding: 10px 12px; max-height: 360px; overflow: auto; }
 .pmem .error { color: var(--destructive, #c0392b); font-size: 12.5px; }
 .pmem .empty { color: var(--muted-foreground); font-size: 12.5px; }

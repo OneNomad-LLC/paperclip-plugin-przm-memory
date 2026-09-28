@@ -5,7 +5,8 @@ import { CSS } from "./styles";
 
 interface IssueContext { identifier: string; title: string; domain: string }
 interface ProjectContext { name: string; domain: string }
-interface SearchResult { text: string; isError: boolean }
+interface Memory { id: string; content: string; type?: string; layer?: string; tags?: string[]; createdAt?: string }
+interface SearchResult { text: string; isError: boolean; memories: Memory[] | null }
 interface ConnectionStatus { ok: boolean; message: string | null; toolCount: number; serverVersion: string | null }
 
 function useStyles() {
@@ -38,9 +39,28 @@ function SearchBox({ domain, initialQuery }: { domain: string; initialQuery: str
       {result.loading && <Spinner size="sm" label="Searching" />}
       {result.error && <div className="error">{result.error.message}</div>}
       {result.data?.isError && <div className="error">{result.data.text}</div>}
-      {result.data && !result.data.isError && <div className="results">{result.data.text}</div>}
+      {result.data && !result.data.isError && (result.data.memories
+        ? <MemoryList memories={result.data.memories} />
+        : <div className="results">{result.data.text}</div>)}
       {!query && !result.loading && <div className="empty">Nothing searched yet.</div>}
     </div>
+  );
+}
+
+function MemoryList({ memories }: { memories: Memory[] }) {
+  if (!memories.length) return <div className="empty">No matching memories.</div>;
+  return (
+    <ul className="memories">
+      {memories.map((m) => (
+        <li key={m.id || m.content.slice(0, 40)}>
+          <p>{m.content.length > 420 ? `${m.content.slice(0, 420)}…` : m.content}</p>
+          <div className="meta">
+            {[m.type, m.layer, m.createdAt ? new Date(m.createdAt).toLocaleDateString() : null].filter(Boolean).join(" · ")}
+            {m.tags?.map((t) => <span key={t} className="tag">{t}</span>)}
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 

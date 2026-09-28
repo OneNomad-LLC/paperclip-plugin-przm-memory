@@ -87,6 +87,35 @@ async function callMemoryTool(ctx: PluginContext, name: string, args: Params): P
   }
 }
 
+interface Memory { id: string; content: string; type?: string; layer?: string; tags?: string[]; createdAt?: string }
+
+// przm Memory returns JSON with a results array. Pull out what people and agents need to read.
+function parseMemories(text: string): Memory[] | null {
+  try {
+    const data = JSON.parse(text);
+    const results = Array.isArray(data?.results) ? data.results : Array.isArray(data) ? data : null;
+    if (!results) return null;
+    return results.map((r: any) => ({
+      id: String(r.id ?? ""),
+      content: String(r.content ?? r.text ?? ""),
+      type: r.type ?? undefined,
+      layer: r.layer ?? undefined,
+      tags: Array.isArray(r.tags) ? r.tags.map(String) : undefined,
+      createdAt: r.createdAt ?? r.created_at ?? r.timestamp ?? undefined,
+    }));
+  } catch {
+    return null;
+  }
+}
+
+function formatMemories(memories: Memory[]): string {
+  if (!memories.length) return "No matching memories.";
+  return memories.map((m, i) => {
+    const meta = [m.type, m.createdAt?.slice(0, 10), m.tags?.length ? `tags: ${m.tags.join(", ")}` : ""].filter(Boolean).join(" · ");
+    return `${i + 1}. ${m.content.replace(/\s+/g, " ").slice(0, 600)}${meta ? `\n   (${meta})` : ""}`;
+  }).join("\n");
+}
+
 async function domainForProject(ctx: PluginContext, companyId: string, projectId: string | null | undefined): Promise<string> {
   if (!projectId) return "paperclip";
   const config = await loadConfig(ctx, companyId);
@@ -138,7 +167,9 @@ const plugin = definePlugin({
         const args: Params = { query, domain };
         if (typeof p.maxResults === "number") args.maxResults = p.maxResults;
         const { text, isError } = await callMemoryTool(ctx, "memory-search", args);
-        return isError ? toolError(text) : { content: text };
+        if (isError) return toolError(text);
+        const memories = parseMemories(text);
+        return memories ? { content: formatMemories(memories), data: memories } : { content: text };
       },
     );
 
@@ -308,7 +339,7 @@ const plugin = definePlugin({
       const args: Params = { query, maxResults: 10 };
       if (domain) args.domain = domain;
       const { text, isError } = await callMemoryTool(ctx, "memory-search", args);
-      return { text, isError };
+      return { text, isError, memories: isError ? null : parseMemories(text) };
     });
 
     // ---------- actions for plugin UI ----------
